@@ -1,6 +1,12 @@
-#include <iostream>
+#include "src/WebsocketServer/WebsocketServer.h"
+#include "src/constants/constants.h"
 
 int main() {
-    std::cout << "Hello, World!" << std::endl;
-    return 0;
+    // TODO: spawn new websocket server instance,
+    //  register network callbacks,
+    //  spawn networking thread,
+    //  spawn consumer worker thread
+
+    WebsocketServer server;
+    server.run(constants::PORT);
 }
