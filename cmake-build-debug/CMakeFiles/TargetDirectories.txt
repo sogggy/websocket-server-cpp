@@ -1,3 +1,0 @@
-/Users/chewsongyu/Desktop/Repos/websocket-server-cpp/cmake-build-debug/CMakeFiles/websocket_server_cpp.dir
-/Users/chewsongyu/Desktop/Repos/websocket-server-cpp/cmake-build-debug/CMakeFiles/edit_cache.dir
-/Users/chewsongyu/Desktop/Repos/websocket-server-cpp/cmake-build-debug/CMakeFiles/rebuild_cache.dir
