@@ -3,6 +3,8 @@
 //
 
 #include "WebsocketServer.h"
+#include "obj/Message/Message.h"
+#include "obj/Parser/Parser.h"
 #include <boost/asio.hpp>
 #include <json/json.h>
 
@@ -45,14 +47,12 @@ std::function<void(Connection conn, WebsocketEndpoint::message_ptr)> onMessagePr
                   << " and message: " << msg->get_payload()
                   << std::endl;
 
-        Json::Value root = WebsocketServer::parseJson(msg->get_payload());
-        const Json::Value type = root["type"];
-        // parse payload into message struct
-        std::cout << "Payload type: " << type.asString() << std::endl;
+        Message* message = Parser::parseMessage(WebsocketServer::parseJson(msg->get_payload()));
+        std::cout << "message: " << *message << std::endl;
 
         try {
             endpoint.send(conn, "Echo: " + msg->get_payload(), msg->get_opcode());
-        } catch (websocketpp::exception const & e) {
+        } catch (const websocketpp::exception& e) {
             std::cout << "Echo failed because: "
                       << "(" << e.what() << ")" << std::endl;
         }
@@ -72,7 +72,10 @@ WebsocketServer::WebsocketServer() {
     endpoint.init_asio(&(this->eventLoop));
 }
 
-WebsocketServer::~WebsocketServer() {}
+WebsocketServer::~WebsocketServer() {
+    endpoint.stop_listening();
+    endpoint.stop();
+}
 
 void WebsocketServer::run(int port) {
     if (running) {

@@ -17,5 +17,5 @@ LINK_DIRECTORIES(${Jsoncpp_INCLUDE_DIRS})
 file(GLOB LIBRARIES ${Jsoncpp_LIBRARIES})
 message("LIBRARIES = ${LIBRARIES}")
 
-add_executable(websocket_server_cpp main.cpp src/WebsocketServer/WebsocketServer.h src/constants/constants.h src/WebsocketServer/WebSocketServer.cpp)
+add_executable(websocket_server_cpp main.cpp src/obj/WebsocketServer/WebsocketServer.h src/constants/constants.h src/obj/WebsocketServer/WebSocketServer.cpp src/obj/Message/Message.h src/obj/Message/UpdateCellMessage.cpp src/obj/Message/UpdateCellMessage.h src/constants/messageTypes.h src/obj/Message/Message.cpp src/obj/Parser/Parser.h)
 TARGET_LINK_LIBRARIES(websocket_server_cpp ${LIBRARIES})
