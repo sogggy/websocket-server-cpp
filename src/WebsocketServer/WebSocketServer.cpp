@@ -4,8 +4,28 @@
 
 #include "WebsocketServer.h"
 #include <boost/asio.hpp>
+#include <json/json.h>
 
 using boost::asio::ip::tcp;
+
+Json::Value WebsocketServer::parseJson(const std::string& jsonString) {
+    Json::Value root;
+    Json::Reader reader;
+    bool success = reader.parse(jsonString, root);
+    if (!success) {
+        std::clog << "Json parse failed for " << jsonString << std::endl;
+        // TODO: throw error and log failure somewhere
+    }
+    return root;
+}
+
+std::string WebsocketServer::stringifyJson(const Json::Value& json) {
+    Json::StreamWriterBuilder wbuilder;
+    wbuilder["commentStyle"] = "None";
+    wbuilder["indentation"] = "";
+
+    return Json::writeString(wbuilder, json);
+}
 
 std::function<void(Connection conn)> onOpenProducer(WebsocketEndpoint& endpoint) {
     return [&endpoint](Connection conn){
@@ -24,6 +44,11 @@ std::function<void(Connection conn, WebsocketEndpoint::message_ptr)> onMessagePr
         std::cout << "on_message called with hdl: " << conn.lock().get()
                   << " and message: " << msg->get_payload()
                   << std::endl;
+
+        Json::Value root = WebsocketServer::parseJson(msg->get_payload());
+        const Json::Value type = root["type"];
+        // parse payload into message struct
+        std::cout << "Payload type: " << type.asString() << std::endl;
 
         try {
             endpoint.send(conn, "Echo: " + msg->get_payload(), msg->get_opcode());

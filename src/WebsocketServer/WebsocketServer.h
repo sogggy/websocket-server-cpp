@@ -8,6 +8,7 @@
 #include <websocketpp/config/asio_no_tls.hpp>
 #include <websocketpp/server.hpp>
 #include <boost/asio.hpp>
+#include <json/value.h>
 
 typedef websocketpp::server<websocketpp::config::asio> WebsocketEndpoint;
 typedef websocketpp::connection_hdl Connection;
@@ -17,6 +18,8 @@ public:
     WebsocketServer();
     ~WebsocketServer();
     void run(int port);
+    static Json::Value parseJson(const std::string& jsonString);
+    static std::string stringifyJson(const Json::Value& json);
 
 private:
     bool running{ false };
