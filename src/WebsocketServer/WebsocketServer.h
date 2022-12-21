@@ -10,18 +10,24 @@
 #include <boost/asio.hpp>
 
 typedef websocketpp::server<websocketpp::config::asio> WebsocketEndpoint;
+typedef websocketpp::connection_hdl Connection;
 
 class WebsocketServer {
-private:
-    WebsocketEndpoint endpoint;
-    websocketpp::lib::asio::io_service eventLoop;
-    int numConnections{ 0 };
-    bool running{ false };
-
 public:
     WebsocketServer();
     ~WebsocketServer();
     void run(int port);
+
+private:
+    bool running{ false };
+    int numConnections{ 0 };
+
+    std::function<void(Connection conn)> onOpen;
+    std::function<void(Connection conn)> onClose;
+    std::function<void(Connection conn, WebsocketEndpoint::message_ptr msg)> onMessage;
+
+    WebsocketEndpoint endpoint;
+    websocketpp::lib::asio::io_service eventLoop;
 };
 
 #endif //WEBSOCKET_SERVER_CPP_WEBSOCKETSERVER_H
