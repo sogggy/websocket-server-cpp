@@ -9,29 +9,30 @@
 #include <string>
 #include <utility>
 #include <json/value.h>
-
-enum class MessageType {
-    CELL_UPDATE,
-};
+#include "constants/messageTypes.h"
 
 class Message {
-public:
-    std::string getId() { return databaseName + "-" +tableName; }
-
 protected:
+    MessageType messageType;
     std::string databaseName;
     std::string tableName;
-    Message(std::string databaseName, std::string tableName):
-        databaseName{std::move( databaseName )}, tableName{std::move( tableName )} {}
+    Message(MessageType messageType, std::string databaseName, std::string tableName):
+            messageType{ messageType },
+            databaseName{std::move( databaseName )},
+            tableName{std::move( tableName )} {}
     Message(Message& message) = default;
 
+public:
+    std::string getId() { return databaseName + "-" +tableName; }
+    MessageType getMessageType() { return messageType; }
+
+protected:
     virtual void print(std::ostream& out) const;
     static Message* createMessage(const Json::Value& json);
     friend std::ostream& operator<<(std::ostream& out, const Message& message) {
         message.print(out);
         return out;
     }
-
 };
 
 #endif //WEBSOCKET_SERVER_CPP_MESSAGE_H

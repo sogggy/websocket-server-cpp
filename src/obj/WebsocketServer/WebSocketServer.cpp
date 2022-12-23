@@ -48,7 +48,7 @@ std::function<void(Connection conn, WebsocketEndpoint::message_ptr)> onMessagePr
                   << std::endl;
 
         Message* message = Parser::parseMessage(WebsocketServer::parseJson(msg->get_payload()));
-        server->getMessagesMap().push(message);
+        server->handleMessage(message);
         std::cout << "map: " << server->getMessagesMap() << std::endl;
 
         try {
@@ -60,7 +60,7 @@ std::function<void(Connection conn, WebsocketEndpoint::message_ptr)> onMessagePr
     };
 }
 
-WebsocketServer::WebsocketServer(): messagesMap{} {
+WebsocketServer::WebsocketServer(): messagesMap{}, numConnections{ 0 } {
 
     //Initialise the Asio library, using our own event loop object
     endpoint.set_error_channels(websocketpp::log::elevel::all);
@@ -72,6 +72,21 @@ WebsocketServer::WebsocketServer(): messagesMap{} {
     endpoint.set_message_handler(onMessageProducer(this));
 
     endpoint.init_asio(&(this->eventLoop));
+}
+
+void WebsocketServer::handleMessage(Message* message) {
+    switch (message->getMessageType()) {
+        case MessageType::REGISTER:
+            // TODO: add to conn map
+            break;
+        case MessageType::UNREGISTER:
+            // TODO: remove from conn map
+            break;
+        case MessageType::PUBLISH:
+            messagesMap.push(message);
+            std::cout << "message pushed" << std::endl;
+            break;
+    }
 }
 
 WebsocketServer::~WebsocketServer() {

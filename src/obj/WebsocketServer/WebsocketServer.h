@@ -38,6 +38,8 @@ public:
     WebsocketEndpoint& getEndpoint() { return endpoint; }
     MessagesMap& getMessagesMap() { return messagesMap; }
 
+    void handleMessage(Message* message);
+
     void run(int port);
     static Json::Value parseJson(const std::string& jsonString);
     static std::string stringifyJson(const Json::Value& json);
