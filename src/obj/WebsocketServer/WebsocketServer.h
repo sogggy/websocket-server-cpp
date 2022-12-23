@@ -9,15 +9,16 @@
 #include <websocketpp/config/asio_no_tls.hpp>
 #include <websocketpp/server.hpp>
 #include <json/value.h>
-#include "obj/MessagesMap/MessagesMap.h"
 
-typedef websocketpp::server<websocketpp::config::asio> WebsocketEndpoint;
-typedef websocketpp::connection_hdl Connection;
+#include "obj/MessagesMap/MessagesMap.h"
+#include "obj/ConnMap/ConnMap.h"
+#include "types/types.h"
 
 class WebsocketServer {
 private:
     bool running{ false };
     int numConnections;
+    ConnMap connMap;
     MessagesMap messagesMap;
     std::shared_mutex mutex;
 
@@ -37,8 +38,9 @@ public:
 
     WebsocketEndpoint& getEndpoint() { return endpoint; }
     MessagesMap& getMessagesMap() { return messagesMap; }
+    ConnMap& getConnMap() { return connMap; }
 
-    void handleMessage(Message* message);
+    void handleMessage(Message* message, Connection conn);
 
     void run(int port);
     static Json::Value parseJson(const std::string& jsonString);
