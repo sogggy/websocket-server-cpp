@@ -12,8 +12,8 @@ UpdateCellMessage::UpdateCellMessage(const Json::Value& json):
     rowId{ json["rowId"].asString() },
     newValue{ json["newValue"].asString() } {}
 
-void UpdateCellMessage::print() const {
-    std::cout << "{ " << "messageType: CELL_UPDATE, " << "databaseName: " << databaseName << ", "
+void UpdateCellMessage::print(std::ostream& out) const {
+    out << "{ " << "messageType: CELL_UPDATE, " << "databaseName: " << databaseName << ", "
     << "tableName: " << tableName << ", " << "columnName: " << columnName << ", " << "rowId: " << rowId << ", "
     << "newValue: " << newValue << " }";
 }

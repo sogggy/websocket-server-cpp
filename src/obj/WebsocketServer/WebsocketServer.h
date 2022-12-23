@@ -9,21 +9,17 @@
 #include <websocketpp/server.hpp>
 #include <boost/asio.hpp>
 #include <json/value.h>
+#include "obj/MessagesMap/MessagesMap.h"
 
 typedef websocketpp::server<websocketpp::config::asio> WebsocketEndpoint;
 typedef websocketpp::connection_hdl Connection;
 
 class WebsocketServer {
-public:
-    WebsocketServer();
-    ~WebsocketServer();
-    void run(int port);
-    static Json::Value parseJson(const std::string& jsonString);
-    static std::string stringifyJson(const Json::Value& json);
-
 private:
     bool running{ false };
-    int numConnections{ 0 };
+    int numConnections;
+    MessagesMap messagesMap;
+    std::shared_mutex mutex;
 
     std::function<void(Connection conn)> onOpen;
     std::function<void(Connection conn)> onClose;
@@ -31,6 +27,20 @@ private:
 
     WebsocketEndpoint endpoint;
     websocketpp::lib::asio::io_service eventLoop;
+
+
+public:
+    WebsocketServer();
+    ~WebsocketServer();
+    WebsocketServer(const WebsocketServer& server) = delete;
+    WebsocketServer& operator=(const WebsocketServer& server) = delete;
+
+    WebsocketEndpoint& getEndpoint() { return endpoint; }
+    MessagesMap& getMessagesMap() { return messagesMap; }
+
+    void run(int port);
+    static Json::Value parseJson(const std::string& jsonString);
+    static std::string stringifyJson(const Json::Value& json);
 };
 
 #endif //WEBSOCKET_SERVER_CPP_WEBSOCKETSERVER_H

@@ -29,29 +29,30 @@ std::string WebsocketServer::stringifyJson(const Json::Value& json) {
     return Json::writeString(wbuilder, json);
 }
 
-std::function<void(Connection conn)> onOpenProducer(WebsocketEndpoint& endpoint) {
-    return [&endpoint](Connection conn){
+std::function<void(Connection conn)> onOpenProducer(WebsocketServer* server) {
+    return [server](Connection conn){
 
     };
 }
 
-std::function<void(Connection conn)> onCloseProducer(WebsocketEndpoint& endpoint) {
-    return [&endpoint](Connection conn){
+std::function<void(Connection conn)> onCloseProducer(WebsocketServer* server) {
+    return [server](Connection conn){
 
     };
 }
 
-std::function<void(Connection conn, WebsocketEndpoint::message_ptr)> onMessageProducer(WebsocketEndpoint& endpoint) {
-    return [&endpoint](Connection conn, WebsocketEndpoint::message_ptr msg){
+std::function<void(Connection conn, WebsocketEndpoint::message_ptr)> onMessageProducer(WebsocketServer* server) {
+    return [server](Connection conn, WebsocketEndpoint::message_ptr msg){
         std::cout << "on_message called with hdl: " << conn.lock().get()
                   << " and message: " << msg->get_payload()
                   << std::endl;
 
         Message* message = Parser::parseMessage(WebsocketServer::parseJson(msg->get_payload()));
-        std::cout << "message: " << *message << std::endl;
+        server->getMessagesMap().push(message);
+        std::cout << "map: " << server->getMessagesMap() << std::endl;
 
         try {
-            endpoint.send(conn, "Echo: " + msg->get_payload(), msg->get_opcode());
+            server->getEndpoint().send(conn, "Echo: " + msg->get_payload(), msg->get_opcode());
         } catch (const websocketpp::exception& e) {
             std::cout << "Echo failed because: "
                       << "(" << e.what() << ")" << std::endl;
@@ -59,15 +60,16 @@ std::function<void(Connection conn, WebsocketEndpoint::message_ptr)> onMessagePr
     };
 }
 
-WebsocketServer::WebsocketServer() {
+WebsocketServer::WebsocketServer(): messagesMap{} {
+
     //Initialise the Asio library, using our own event loop object
     endpoint.set_error_channels(websocketpp::log::elevel::all);
     endpoint.set_access_channels(websocketpp::log::alevel::all ^ websocketpp::log::alevel::frame_payload);
 
     // set handlers
-    endpoint.set_open_handler(onOpenProducer(endpoint));
-    endpoint.set_close_handler(onCloseProducer(endpoint));
-    endpoint.set_message_handler(onMessageProducer(endpoint));
+    endpoint.set_open_handler(onOpenProducer(this));
+    endpoint.set_close_handler(onCloseProducer(this));
+    endpoint.set_message_handler(onMessageProducer(this));
 
     endpoint.init_asio(&(this->eventLoop));
 }

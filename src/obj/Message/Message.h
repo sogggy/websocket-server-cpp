@@ -15,6 +15,9 @@ enum class MessageType {
 };
 
 class Message {
+public:
+    std::string getId() { return databaseName + "-" +tableName; }
+
 protected:
     std::string databaseName;
     std::string tableName;
@@ -22,10 +25,10 @@ protected:
         databaseName{std::move( databaseName )}, tableName{std::move( tableName )} {}
     Message(Message& message) = default;
 
-    virtual void print() const;
+    virtual void print(std::ostream& out) const;
     static Message* createMessage(const Json::Value& json);
     friend std::ostream& operator<<(std::ostream& out, const Message& message) {
-        message.print();
+        message.print(out);
         return out;
     }
 

@@ -5,6 +5,7 @@
 #ifndef WEBSOCKET_SERVER_CPP_UPDATECELLMESSAGE_H
 #define WEBSOCKET_SERVER_CPP_UPDATECELLMESSAGE_H
 
+#include <iostream>
 #include "Message.h"
 
 class UpdateCellMessage: public Message {
@@ -21,7 +22,7 @@ public:
     static UpdateCellMessage* createMessage(const Json::Value& json);
 
 protected:
-    void print() const;
+    void print(std::ostream& out) const;
 
 private:
     UpdateCellMessage() = default;
