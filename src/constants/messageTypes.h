@@ -5,7 +5,6 @@
 #ifndef WEBSOCKET_SERVER_CPP_MESSAGETYPES_H
 #define WEBSOCKET_SERVER_CPP_MESSAGETYPES_H
 
-
 #include <string_view>
 
 enum class MessageType {

@@ -3,7 +3,6 @@
 //
 
 #include "Message.h"
-#include <iostream>
 
 void Message::print(std::ostream& out) const {
     out << "Base message class" << std::endl;

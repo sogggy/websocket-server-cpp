@@ -6,6 +6,7 @@
 #define WEBSOCKET_SERVER_CPP_UPDATEROWMESSAGE_H
 
 #include <iostream>
+#include <json/value.h>
 #include "Message.h"
 #include "constants/messageTypes.h"
 

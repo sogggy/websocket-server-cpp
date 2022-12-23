@@ -2,9 +2,6 @@
 // Created by Chew Song Yu on 22/12/22.
 //
 
-#include <iostream>
-#include <string>
-
 #include "MessagesMap.h"
 
 void MessagesMap::push(Message* message) {

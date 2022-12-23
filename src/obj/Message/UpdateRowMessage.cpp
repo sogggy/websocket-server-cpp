@@ -4,8 +4,6 @@
 
 #include "UpdateRowMessage.h"
 #include "constants/messageTypes.h"
-#include <iostream>
-#include <json/writer.h>
 
 UpdateRowMessage::UpdateRowMessage(const Json::Value& json):
     Message{

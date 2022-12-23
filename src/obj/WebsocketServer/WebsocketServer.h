@@ -5,9 +5,9 @@
 #ifndef WEBSOCKET_SERVER_CPP_WEBSOCKETSERVER_H
 #define WEBSOCKET_SERVER_CPP_WEBSOCKETSERVER_H
 
+#include <boost/asio.hpp>
 #include <websocketpp/config/asio_no_tls.hpp>
 #include <websocketpp/server.hpp>
-#include <boost/asio.hpp>
 #include <json/value.h>
 #include "obj/MessagesMap/MessagesMap.h"
 
