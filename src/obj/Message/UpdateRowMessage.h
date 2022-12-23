@@ -15,8 +15,6 @@ private:
     std::string columnName;
     std::string rowId;
     std::string newValue;
-    std::string databaseName;
-    std::string tableName;
 
     UpdateRowMessage() = delete;
     explicit UpdateRowMessage(const Json::Value& json);

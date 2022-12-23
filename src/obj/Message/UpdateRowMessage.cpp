@@ -5,11 +5,13 @@
 #include "UpdateRowMessage.h"
 #include "constants/messageTypes.h"
 #include <iostream>
+#include <json/writer.h>
 
 UpdateRowMessage::UpdateRowMessage(const Json::Value& json):
     Message{
         MessageType::PUBLISH,
-        json["databaseName"].asString(), json["tableName"].asString()
+        json["databaseName"].asString(),
+        json["tableName"].asString(),
     },
         publishMessageType{ PublishMessageType::ROW_UPDATE },
         columnName{ json["columnName"].asString() },
@@ -25,7 +27,7 @@ void UpdateRowMessage::print(std::ostream& out) const {
         << "columnName: " << columnName << ", " << std::endl
         << "rowId: " << rowId << ", " << std::endl
         << "newValue: " << newValue << std::endl
-        << " }";
+        << "}";
 }
 
 UpdateRowMessage* UpdateRowMessage::createMessage(const Json::Value& json) {

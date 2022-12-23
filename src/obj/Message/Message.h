@@ -18,11 +18,11 @@ protected:
     std::string tableName;
     Message(MessageType messageType, std::string databaseName, std::string tableName):
             messageType{ messageType },
-            databaseName{std::move( databaseName )},
-            tableName{std::move( tableName )} {}
-    Message(Message& message) = default;
+            databaseName{ databaseName },
+            tableName{ tableName } {}
 
 public:
+    Message(Message& message) = delete;
     std::string getId() { return databaseName + "-" +tableName; }
     MessageType getMessageType() { return messageType; }
 
