@@ -14,6 +14,11 @@ void SafeQueue<T>::push_back_safe(T* elem) {
 template <typename T>
 T* SafeQueue<T>::pop_front_safe() {
     mutex.lock();
+    if (queue.size() == 0) {
+        mutex.unlock();
+        return nullptr;
+    }
+
     T* elem = queue.front();
     queue.pop_front();
     mutex.unlock();

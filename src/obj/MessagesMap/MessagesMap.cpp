@@ -14,6 +14,13 @@ void MessagesMap::push(Message* message) {
     messageMap[id]->push_back_safe(message);
 }
 
+Message* MessagesMap::getMessage(const std::string& id) {
+    mutex.lock_shared();
+    MessagesQueue* messagesQueue = messageMap[id];
+    mutex.unlock_shared();
+    return messagesQueue->pop_front_safe();
+}
+
 std::ostream& operator<<(std::ostream& out, MessagesMap& map) {
     out << "{ " << std::endl;
     map.mutex.lock_shared();

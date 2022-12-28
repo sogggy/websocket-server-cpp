@@ -5,19 +5,20 @@
 #ifndef WEBSOCKET_SERVER_CPP_UNREGISTERMESSAGE_H
 #define WEBSOCKET_SERVER_CPP_UNREGISTERMESSAGE_H
 
+#include <json/json.h>
 
 #include "Message.h"
 #include "constants/messageTypes.h"
 
 class UnregisterMessage: public Message {
 private:
-    MessageType messageType;
-    UnregisterMessage() = delete;
     explicit UnregisterMessage(const Json::Value& json);
 
 public:
-    UnregisterMessage& operator=(const Json::Value json);
+    UnregisterMessage() = delete;
+    UnregisterMessage& operator=(Json::Value json);
     static UnregisterMessage* createMessage(const Json::Value& json);
+    Json::Value toJson() override;
 
 protected:
     void print(std::ostream& out) const override;

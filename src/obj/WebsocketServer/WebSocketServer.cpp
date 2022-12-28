@@ -2,31 +2,9 @@
 // Created by Chew Song Yu on 20/12/22.
 //
 
-#include <json/json.h>
 #include "WebsocketServer.h"
-#include "obj/Message/Message.h"
-#include "obj/Parser/Parser.h"
 
 using boost::asio::ip::tcp;
-
-Json::Value WebsocketServer::parseJson(const std::string& jsonString) {
-    Json::Value root;
-    Json::Reader reader;
-    bool success = reader.parse(jsonString, root);
-    if (!success) {
-        std::clog << "Json parse failed for " << jsonString << std::endl;
-        // TODO: throw error and log failure somewhere
-    }
-    return root;
-}
-
-std::string WebsocketServer::stringifyJson(const Json::Value& json) {
-    Json::StreamWriterBuilder wbuilder;
-    wbuilder["commentStyle"] = "None";
-    wbuilder["indentation"] = "";
-
-    return Json::writeString(wbuilder, json);
-}
 
 std::function<void(Connection conn)> onOpenProducer(WebsocketServer* server) {
     return [server](Connection conn){
@@ -45,12 +23,12 @@ std::function<void(Connection conn, WebsocketEndpoint::message_ptr)> onMessagePr
         const std::string& payload = msg->get_payload();
         std::cout << "message: " << payload << "received" << std::endl;
 
-        Message* message = Parser::parseMessage(WebsocketServer::parseJson(payload));
+        Message* message = Parser::parseMessage(Parser::parseJsonString(payload));
         server->handleMessage(message, conn);
     };
 }
 
-WebsocketServer::WebsocketServer(): connMap{}, messagesMap{}, numConnections{ 0 } {
+WebsocketServer::WebsocketServer(): connMap{ &endpoint } {
 
     //Initialise the Asio library, using our own event loop object
     endpoint.set_error_channels(websocketpp::log::elevel::all);
@@ -79,6 +57,11 @@ void WebsocketServer::handleMessage(Message* message, Connection conn) {
         case MessageType::PUBLISH:
             std::cout << "publish message received!" << std::endl;
             messagesMap.push(message);
+            std::unique_lock<std::mutex> ul(mutex);
+            jobsCount++;
+            jobs.push_back_safe(&message->getId());
+            cv.notify_one();
+            ul.unlock();
             std::cout << "messageMap: " << messagesMap << std::endl;
             break;
     }

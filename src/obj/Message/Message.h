@@ -8,7 +8,9 @@
 
 #include <string>
 #include <utility>
+#include <json/json.h>
 #include <json/value.h>
+
 #include "constants/messageTypes.h"
 
 class Message {
@@ -25,8 +27,9 @@ protected:
 
 public:
     Message(Message& message) = delete;
-    std::string getId() { return id; }
+    std::string& getId() { return id; }
     MessageType getMessageType() { return messageType; }
+    virtual Json::Value toJson();
 
 protected:
     virtual void print(std::ostream& out) const;

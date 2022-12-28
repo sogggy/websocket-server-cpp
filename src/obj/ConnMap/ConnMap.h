@@ -16,17 +16,20 @@
 
 class ConnMap {
 private:
+    WebsocketEndpoint* endpoint;
     std::unordered_map<std::string, std::unique_ptr<Connections>> connMap;
     std::shared_mutex mutex;
 
 public:
-    ConnMap() = default;
+    ConnMap() = delete;
+    ConnMap(WebsocketEndpoint* endpoint): endpoint{ endpoint }{}
     ConnMap& operator=(const ConnMap& connMap) = delete;
     ConnMap(const ConnMap& connMap) = delete;
 
     friend std::ostream& operator<<(std::ostream& out, ConnMap& conn);
     void push_safe(const std::string& id, Connection conn);
     void remove_safe(const std::string& id, Connection conn);
+    void publish(const std::string& id, Message* message);
 };
 
 

@@ -17,6 +17,17 @@ UpdateRowMessage::UpdateRowMessage(const Json::Value& json):
         newValue{ json["newValue"].asString(),
     } {}
 
+Json::Value UpdateRowMessage::toJson() {
+    Json::Value root;
+    root["type"] = "PUBLISH";
+    root["databaseName"] = databaseName;
+    root["tableName"] = tableName;
+    root["columnAlias"] = columnAlias;
+    root["rowId"] = rowId;
+    root["newValue"] = newValue;
+    return root;
+}
+
 void UpdateRowMessage::print(std::ostream& out) const {
     out << "{ " << std::endl
         << "messageType: ROW_UPDATE, " << std::endl

@@ -3,6 +3,7 @@
 //
 
 #include "Connections.h"
+#include "obj/Parser/Parser.h"
 
 void Connections::push_safe(Connection conn) {
     mutex.lock();
@@ -22,6 +23,14 @@ void Connections::remove_safe(Connection& conn) {
         ++i;
     }
     mutex.unlock();
+}
+
+void Connections::publish_safe(WebsocketEndpoint* endpoint, Message* message) {
+    mutex.lock_shared();
+    for (auto conn: connections) {
+        endpoint->send(conn, Parser::stringifyJson(message->toJson()), websocketpp::frame::opcode::text);
+    }
+    mutex.unlock_shared();
 }
 
 std::ostream& operator<<(std::ostream& out, Connections& conns) {

@@ -12,10 +12,11 @@
 
 #include "obj/Message/Message.h"
 #include "obj/SafeQueue/SafeQueue.h"
+#include "types/types.h"
 
 class MessagesMap {
 private:
-    std::unordered_map<std::string, SafeQueue<Message>*> messageMap;
+    std::unordered_map<std::string, MessagesQueue*> messageMap;
     std::shared_mutex mutex;
 
 public:
@@ -23,6 +24,7 @@ public:
     MessagesMap(MessagesMap& messagesMap) = delete;
     MessagesMap& operator=(MessagesMap& messagesMap) = delete;
     void push(Message* message);
+    Message* getMessage(const std::string& id);
     friend std::ostream& operator<<(std::ostream& out, MessagesMap& map);
 };
 

@@ -15,10 +15,18 @@ UnregisterMessage* UnregisterMessage::createMessage(const Json::Value& json) {
     return new UnregisterMessage(json);
 }
 
-UnregisterMessage& UnregisterMessage::operator=(const Json::Value json) {
+UnregisterMessage& UnregisterMessage::operator=(Json::Value json) {
     this->databaseName = json["databaseName"].asString();
     this->tableName = json["tableName"].asString();
     return *this;
+}
+
+Json::Value UnregisterMessage::toJson() {
+    Json::Value root;
+    root["type"] = "UNREGISTER";
+    root["databaseName"] = databaseName;
+    root["tableName"] = tableName;
+    return root;
 }
 
 void UnregisterMessage::print(std::ostream& out) const {
