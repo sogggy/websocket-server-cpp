@@ -4,22 +4,23 @@
 
 #include "ConnMap.h"
 
-void ConnMap::push_safe(std::string id, Connection conn) {
+void ConnMap::push_safe(const std::string& id, Connection conn) {
     mutex.lock();
     if (connMap.find(id) == connMap.end()) {
-        connMap.insert({ id, new Connections() });
+        connMap.insert({ id, std::make_unique<Connections>()});
     }
     mutex.unlock();
     connMap[id]->push_safe(conn);
 }
 
-void ConnMap::remove_safe(std::string id, Connection conn) {
+void ConnMap::remove_safe(const std::string& id, Connection conn) {
     mutex.lock_shared();
     if (connMap.find(id) == connMap.end()) {
         mutex.unlock_shared();
+        return ;
     }
 
-    auto* connections = connMap[id];
+    auto& connections = connMap[id];
     mutex.unlock_shared();
     connections->remove_safe(conn);
 }
@@ -28,7 +29,7 @@ std::ostream& operator<<(std::ostream& out, ConnMap& conn) {
     out << "{" << std::endl;
     conn.mutex.lock_shared();
     for (auto& it : conn.connMap) {
-        out << it.first << ": " << it.second << std::endl;
+        out << it.first << ": " << *it.second << std::endl;
     }
     conn.mutex.unlock_shared();
     out << "}" << std::endl;

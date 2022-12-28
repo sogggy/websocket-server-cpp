@@ -48,10 +48,9 @@ std::function<void(Connection conn, WebsocketEndpoint::message_ptr)> onMessagePr
 
         Message* message = Parser::parseMessage(WebsocketServer::parseJson(msg->get_payload()));
         server->handleMessage(message, conn);
-        std::cout << "map: " << server->getMessagesMap() << std::endl;
 
         try {
-            server->getEndpoint().send(conn, "Echo: " + msg->get_payload(), msg->get_opcode());
+//            server->getEndpoint().send(conn, "Echo: " + msg->get_payload(), msg->get_opcode());
         } catch (const websocketpp::exception& e) {
             std::cout << "Echo failed because: "
                       << "(" << e.what() << ")" << std::endl;
@@ -76,19 +75,19 @@ WebsocketServer::WebsocketServer(): connMap{}, messagesMap{}, numConnections{ 0 
 void WebsocketServer::handleMessage(Message* message, Connection conn) {
     switch (message->getMessageType()) {
         case MessageType::REGISTER:
-            connMap.push_safe(message->getId(), conn);
             std::cout << "conn registered!" << std::endl;
+            connMap.push_safe(message->getId(), conn);
             std::cout << "connMap: " << connMap << std::endl;
             break;
         case MessageType::UNREGISTER:
             std::cout << "conn unregistered!" << std::endl;
-            std::cout << "connMap: " << connMap << std::endl;
             connMap.remove_safe(message->getId(), conn);
+            std::cout << "connMap: " << connMap << std::endl;
             break;
         case MessageType::PUBLISH:
-            std::cout << "message published!" << std::endl;
-            std::cout << "messageMap: " << messagesMap << std::endl;
+            std::cout << "publish message received!" << std::endl;
             messagesMap.push(message);
+            std::cout << "messageMap: " << messagesMap << std::endl;
             break;
     }
 }

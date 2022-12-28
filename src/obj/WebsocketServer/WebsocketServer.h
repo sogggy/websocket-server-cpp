@@ -29,16 +29,15 @@ private:
     WebsocketEndpoint endpoint;
     websocketpp::lib::asio::io_service eventLoop;
 
-
 public:
     WebsocketServer();
     ~WebsocketServer();
     WebsocketServer(const WebsocketServer& server) = delete;
     WebsocketServer& operator=(const WebsocketServer& server) = delete;
 
-    WebsocketEndpoint& getEndpoint() { return endpoint; }
-    MessagesMap& getMessagesMap() { return messagesMap; }
-    ConnMap& getConnMap() { return connMap; }
+    const WebsocketEndpoint& getEndpoint() { return endpoint; }
+    const MessagesMap& getMessagesMap() { return messagesMap; }
+    const ConnMap& getConnMap() { return connMap; }
 
     void handleMessage(Message* message, Connection conn);
 

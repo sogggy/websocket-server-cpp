@@ -24,7 +24,7 @@ public:
     friend std::ostream& operator<<(std::ostream& out, Connections& conns);
 
     void push_safe(Connection conn);
-    void remove_safe(Connection conn);
+    void remove_safe(Connection& conn);
 };
 
 

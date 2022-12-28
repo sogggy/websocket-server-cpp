@@ -10,13 +10,12 @@ void Connections::push_safe(Connection conn) {
     mutex.unlock();
 }
 
-void Connections::remove_safe(Connection conn) {
-    // TODO: verify if works
+void Connections::remove_safe(Connection& conn) {
     // on top of removing the desired connection, eagerly clean up all dangling pointers
     mutex.lock();
     auto i = connections.begin();
     while (i != connections.end()) {
-        if (i->expired() || &(*i) == &conn) {
+        if (i->expired() || conn.lock() == i->lock()) {
             i = connections.erase(i);
             continue;
         }

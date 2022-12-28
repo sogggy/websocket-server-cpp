@@ -13,7 +13,7 @@
 class UpdateRowMessage: public Message {
 private:
     PublishMessageType publishMessageType;
-    std::string columnName;
+    std::string columnAlias;
     std::string rowId;
     std::string newValue;
 

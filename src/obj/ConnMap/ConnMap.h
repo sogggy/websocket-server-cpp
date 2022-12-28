@@ -16,7 +16,7 @@
 
 class ConnMap {
 private:
-    std::unordered_map<std::string, Connections*> connMap;
+    std::unordered_map<std::string, std::unique_ptr<Connections>> connMap;
     std::shared_mutex mutex;
 
 public:
@@ -25,8 +25,8 @@ public:
     ConnMap(const ConnMap& connMap) = delete;
 
     friend std::ostream& operator<<(std::ostream& out, ConnMap& conn);
-    void push_safe(std::string id, Connection conn);
-    void remove_safe(std::string id, Connection conn);
+    void push_safe(const std::string& id, Connection conn);
+    void remove_safe(const std::string& id, Connection conn);
 };
 
 
