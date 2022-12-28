@@ -42,19 +42,11 @@ std::function<void(Connection conn)> onCloseProducer(WebsocketServer* server) {
 
 std::function<void(Connection conn, WebsocketEndpoint::message_ptr)> onMessageProducer(WebsocketServer* server) {
     return [server](Connection conn, WebsocketEndpoint::message_ptr msg){
-        std::cout << "on_message called with hdl: " << conn.lock().get()
-                  << " and message: " << msg->get_payload()
-                  << std::endl;
+        const std::string& payload = msg->get_payload();
+        std::cout << "message: " << payload << "received" << std::endl;
 
-        Message* message = Parser::parseMessage(WebsocketServer::parseJson(msg->get_payload()));
+        Message* message = Parser::parseMessage(WebsocketServer::parseJson(payload));
         server->handleMessage(message, conn);
-
-        try {
-//            server->getEndpoint().send(conn, "Echo: " + msg->get_payload(), msg->get_opcode());
-        } catch (const websocketpp::exception& e) {
-            std::cout << "Echo failed because: "
-                      << "(" << e.what() << ")" << std::endl;
-        }
     };
 }
 

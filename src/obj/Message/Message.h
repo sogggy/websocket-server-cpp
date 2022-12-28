@@ -16,14 +16,16 @@ protected:
     MessageType messageType;
     std::string databaseName;
     std::string tableName;
-    Message(MessageType messageType, std::string databaseName, std::string tableName):
+    std::string id;
+    Message(MessageType messageType, const std::string& databaseName, const std::string& tableName):
             messageType{ messageType },
             databaseName{ databaseName },
-            tableName{ tableName } {}
+            tableName{ tableName },
+            id { databaseName + "-" + tableName } {}
 
 public:
     Message(Message& message) = delete;
-    std::string getId() { return databaseName + "-" +tableName; }
+    std::string getId() { return id; }
     MessageType getMessageType() { return messageType; }
 
 protected:

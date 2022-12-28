@@ -8,5 +8,10 @@ int main() {
     //  spawn consumer worker thread
 
     WebsocketServer server;
+
+    std::thread workerThread([]() {
+
+    });
+
     server.run(constants::PORT);
 }

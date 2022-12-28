@@ -11,11 +11,11 @@
 #include <unordered_map>
 
 #include "obj/Message/Message.h"
-#include "MessagesQueue.h"
+#include "obj/SafeQueue/SafeQueue.h"
 
 class MessagesMap {
 private:
-    std::unordered_map<std::string, MessagesQueue*> messageMap;
+    std::unordered_map<std::string, SafeQueue<Message>*> messageMap;
     std::shared_mutex mutex;
 
 public:

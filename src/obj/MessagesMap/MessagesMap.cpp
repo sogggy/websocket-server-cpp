@@ -8,7 +8,7 @@ void MessagesMap::push(Message* message) {
     std::string id = message->getId();
     mutex.lock();
     if (messageMap.find(id) == messageMap.end()) {
-        messageMap.insert(std::pair<std::string, MessagesQueue*>(id, new MessagesQueue()));
+        messageMap.insert(std::pair<std::string, SafeQueue<Message>*>(id, new SafeQueue<Message>()));
     }
     mutex.unlock();
     messageMap[id]->push_back_safe(message);
