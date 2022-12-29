@@ -25,11 +25,11 @@ void ConnMap::remove_safe(const std::string& id, Connection conn) {
     connections->remove_safe(conn);
 }
 
-void ConnMap::publish(const std::string& id, Message* message) {
+void ConnMap::publish(const std::string& id, std::unique_ptr<Message> message) {
     mutex.lock_shared();
     std::unique_ptr<Connections>& connections = connMap[id];
     mutex.unlock_shared();
-    connections->publish_safe(endpoint, message);
+    connections->publish_safe(endpoint, std::move(message));
 }
 
 std::ostream& operator<<(std::ostream& out, ConnMap& conn) {

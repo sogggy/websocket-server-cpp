@@ -11,8 +11,8 @@ RegisterMessage::RegisterMessage(const Json::Value& json):
         json["tableName"].asString(),
         } {}
 
-RegisterMessage* RegisterMessage::createMessage(const Json::Value& json) {
-    return new RegisterMessage(json);
+std::unique_ptr<RegisterMessage> RegisterMessage::createMessage(const Json::Value& json) {
+    return std::make_unique<RegisterMessage>(json);
 }
 
 Json::Value RegisterMessage::toJson() {
@@ -25,9 +25,9 @@ Json::Value RegisterMessage::toJson() {
 
 void RegisterMessage::print(std::ostream& out) const {
     out << "{ "
-        << "messageType: " << messageType::REGISTER << ", " << std::endl
-        << "databaseName: " << databaseName << ", " << std::endl
-        << "tableName: " << tableName << std::endl
+        << "messageType: " << messageType::REGISTER << ", "
+        << "databaseName: " << databaseName << ", "
+        << "tableName: " << tableName
         << " }";
 }
 

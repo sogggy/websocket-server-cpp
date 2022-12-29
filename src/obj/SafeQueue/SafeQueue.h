@@ -7,6 +7,7 @@
 
 #include <deque>
 #include <iostream>
+#include <memory>
 #include <shared_mutex>
 
 #include "obj/Message/Message.h"
@@ -14,15 +15,15 @@
 template <typename T>
 class SafeQueue {
 private:
-    std::deque<T*> queue;
+    std::deque<std::unique_ptr<T>> queue;
     std::shared_mutex mutex;
 
 public:
     SafeQueue() = default;
     SafeQueue(const SafeQueue& safeQueue) = delete;
     SafeQueue& operator=(SafeQueue& safeQueue) = delete;
-    void push_back_safe(T* elem);
-    T* pop_front_safe();
+    void push_back_safe(std::unique_ptr<T> elem);
+    std::unique_ptr<T> pop_front_safe();
 
     friend std::ostream& operator<<(std::ostream& out, SafeQueue<T>& safeQueue) {
         out << "[ ";

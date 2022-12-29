@@ -6,6 +6,7 @@
 #define WEBSOCKET_SERVER_CPP_CONNMAP_H
 
 #include <iostream>
+#include <memory>
 #include <shared_mutex>
 #include <string>
 #include <unordered_map>
@@ -22,14 +23,14 @@ private:
 
 public:
     ConnMap() = delete;
-    ConnMap(WebsocketEndpoint* endpoint): endpoint{ endpoint }{}
+    explicit ConnMap(WebsocketEndpoint* endpoint): endpoint{ endpoint }{}
     ConnMap& operator=(const ConnMap& connMap) = delete;
     ConnMap(const ConnMap& connMap) = delete;
 
     friend std::ostream& operator<<(std::ostream& out, ConnMap& conn);
     void push_safe(const std::string& id, Connection conn);
     void remove_safe(const std::string& id, Connection conn);
-    void publish(const std::string& id, Message* message);
+    void publish(const std::string& id, std::unique_ptr<Message> message);
 };
 
 

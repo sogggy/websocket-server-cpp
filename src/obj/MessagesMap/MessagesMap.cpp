@@ -4,19 +4,20 @@
 
 #include "MessagesMap.h"
 
-void MessagesMap::push(Message* message) {
+void MessagesMap::push(std::unique_ptr<Message> message) {
     std::string id = message->getId();
     mutex.lock();
     if (messageMap.find(id) == messageMap.end()) {
-        messageMap.insert(std::pair<std::string, SafeQueue<Message>*>(id, new SafeQueue<Message>()));
+        messageMap.insert(std::pair<std::string,
+                          std::unique_ptr<SafeQueue<Message>>>(id, std::make_unique<SafeQueue<Message>>()));
     }
     mutex.unlock();
-    messageMap[id]->push_back_safe(message);
+    messageMap[id]->push_back_safe(std::move(message));
 }
 
-Message* MessagesMap::getMessage(const std::string& id) {
+std::unique_ptr<Message> MessagesMap::getMessage(const std::string& id) {
     mutex.lock_shared();
-    MessagesQueue* messagesQueue = messageMap[id];
+    std::unique_ptr<MessagesQueue>& messagesQueue = messageMap[id];
     mutex.unlock_shared();
     return messagesQueue->pop_front_safe();
 }
@@ -25,7 +26,7 @@ std::ostream& operator<<(std::ostream& out, MessagesMap& map) {
     out << "{ " << std::endl;
     map.mutex.lock_shared();
     for (auto& it: map.messageMap) {
-        out << it.first << ": " << *it.second << std::endl;
+        out << '\t' << it.first << ": " << *it.second << std::endl;
     }
     map.mutex.unlock_shared();
     out << "}" << std::endl;

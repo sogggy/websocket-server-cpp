@@ -25,7 +25,7 @@ public:
 
     void push_safe(Connection conn);
     void remove_safe(Connection& conn);
-    void publish_safe(WebsocketEndpoint* endpoint, Message* message);
+    void publish_safe(WebsocketEndpoint* endpoint, std::unique_ptr<Message> message);
 };
 
 

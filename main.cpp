@@ -16,13 +16,13 @@ int main() {
         while (true) {
             std::unique_lock<std::mutex> ul(server.getMutex());
             server.getCv().wait(ul, [&]() {
-                return server.getJobsCount() != 0;
+                return server.getJobsCount() > 0;
             });
             const std::string id = *server.getJobs().pop_front_safe();
             server.jobsCount--;
-            Message* message = server.getMessagesMap().getMessage(id);
-            server.getConnMap().publish(id, message);
+            std::unique_ptr<Message> message = server.getMessagesMap().getMessage(id);
             ul.unlock();
+            server.getConnMap().publish(id, std::move(message));
         }
     });
 

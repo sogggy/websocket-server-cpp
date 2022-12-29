@@ -6,8 +6,9 @@
 #define WEBSOCKET_SERVER_CPP_WEBSOCKETSERVER_H
 
 #include <condition_variable>
-#include <string>
+#include <memory>
 #include <mutex>
+#include <string>
 
 #include <boost/asio.hpp>
 #include <websocketpp/config/asio_no_tls.hpp>
@@ -48,11 +49,11 @@ public:
     MessagesMap& getMessagesMap() { return messagesMap; }
     ConnMap& getConnMap() { return connMap; }
     Jobs& getJobs() { return jobs; }
-    int getJobsCount() { return jobsCount; }
+    int getJobsCount() const { return jobsCount; }
     std::condition_variable& getCv() { return cv; }
     std::mutex& getMutex() { return mutex; }
 
-    void handleMessage(Message* message, Connection conn);
+    void handleMessage(std::unique_ptr<Message> message, Connection conn);
 
     void run(int port);
 };

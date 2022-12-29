@@ -25,9 +25,9 @@ void Connections::remove_safe(Connection& conn) {
     mutex.unlock();
 }
 
-void Connections::publish_safe(WebsocketEndpoint* endpoint, Message* message) {
+void Connections::publish_safe(WebsocketEndpoint* endpoint, std::unique_ptr<Message> message) {
     mutex.lock_shared();
-    for (auto conn: connections) {
+    for (const auto& conn: connections) {
         endpoint->send(conn, Parser::stringifyJson(message->toJson()), websocketpp::frame::opcode::text);
     }
     mutex.unlock_shared();

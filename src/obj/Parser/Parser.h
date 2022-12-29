@@ -5,7 +5,9 @@
 #ifndef WEBSOCKET_SERVER_CPP_PARSER_H
 #define WEBSOCKET_SERVER_CPP_PARSER_H
 
+#include <memory>
 #include <json/value.h>
+
 #include "constants/messageTypes.h"
 #include "obj/Message/UpdateRowMessage.h"
 #include "obj/Message/Message.h"
@@ -13,13 +15,13 @@
 #include "obj/Message/UnregisterMessage.h"
 
 namespace Parser {
-    Message* parsePublishMessage(const Json::Value& json);
+    std::unique_ptr<Message> parsePublishMessage(const Json::Value& json);
 
     inline std::string getMethodRoute(const Json::Value& json) {
         return json["method"].asString() + " " + json["route"].asString();
     }
 
-    inline Message* parseMessage(const Json::Value& json) {
+    inline std::unique_ptr<Message> parseMessage(const Json::Value& json) {
         std::string type = json["type"].asString();
         std::string_view typeSv = type;
         if (typeSv == messageType::PUBLISH) {
@@ -33,7 +35,7 @@ namespace Parser {
         }
     }
 
-    inline Message* parsePublishMessage(const Json::Value& json) {
+    inline std::unique_ptr<Message> parsePublishMessage(const Json::Value& json) {
         std::string methodRoute = getMethodRoute(json);
         std::string_view methodRouteSv = methodRoute;
         if (methodRouteSv == publishMessageType::ROW_UPDATE) {

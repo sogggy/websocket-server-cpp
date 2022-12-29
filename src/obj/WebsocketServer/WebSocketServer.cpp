@@ -23,13 +23,12 @@ std::function<void(Connection conn, WebsocketEndpoint::message_ptr)> onMessagePr
         const std::string& payload = msg->get_payload();
         std::cout << "message: " << payload << "received" << std::endl;
 
-        Message* message = Parser::parseMessage(Parser::parseJsonString(payload));
-        server->handleMessage(message, conn);
+        std::unique_ptr<Message> message = Parser::parseMessage(Parser::parseJsonString(payload));
+        server->handleMessage(std::move(message), conn);
     };
 }
 
 WebsocketServer::WebsocketServer(): connMap{ &endpoint } {
-
     //Initialise the Asio library, using our own event loop object
     endpoint.set_error_channels(websocketpp::log::elevel::all);
     endpoint.set_access_channels(websocketpp::log::alevel::all ^ websocketpp::log::alevel::frame_payload);
@@ -42,28 +41,36 @@ WebsocketServer::WebsocketServer(): connMap{ &endpoint } {
     endpoint.init_asio(&(this->eventLoop));
 }
 
-void WebsocketServer::handleMessage(Message* message, Connection conn) {
+void WebsocketServer::handleMessage(std::unique_ptr<Message> message, Connection conn) {
     switch (message->getMessageType()) {
-        case MessageType::REGISTER:
+        case MessageType::REGISTER: {
             std::cout << "conn registered!" << std::endl;
             connMap.push_safe(message->getId(), conn);
             std::cout << "connMap: " << connMap << std::endl;
             break;
-        case MessageType::UNREGISTER:
+        }
+        case MessageType::UNREGISTER: {
             std::cout << "conn unregistered!" << std::endl;
             connMap.remove_safe(message->getId(), conn);
             std::cout << "connMap: " << connMap << std::endl;
             break;
-        case MessageType::PUBLISH:
+        }
+        case MessageType::PUBLISH: {
             std::cout << "publish message received!" << std::endl;
-            messagesMap.push(message);
+            std::string id = message->getId();
+            messagesMap.push(std::move(message));
             std::unique_lock<std::mutex> ul(mutex);
             jobsCount++;
-            jobs.push_back_safe(&message->getId());
+            jobs.push_back_safe(std::make_unique<std::string>(id));
             cv.notify_one();
             ul.unlock();
             std::cout << "messageMap: " << messagesMap << std::endl;
             break;
+        }
+        default: {
+            std::cout << "unrecognized message type!" << std::endl;
+            break;
+        }
     }
 }
 

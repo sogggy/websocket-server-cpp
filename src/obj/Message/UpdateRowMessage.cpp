@@ -29,18 +29,18 @@ Json::Value UpdateRowMessage::toJson() {
 }
 
 void UpdateRowMessage::print(std::ostream& out) const {
-    out << "{ " << std::endl
-        << "messageType: ROW_UPDATE, " << std::endl
-        << "databaseName: " << databaseName << ", " << std::endl
-        << "tableName: " << tableName << ", " << std::endl
-        << "columnAlias: " << columnAlias << ", " << std::endl
-        << "rowId: " << rowId << ", " << std::endl
-        << "newValue: " << newValue << std::endl
-        << "}";
+    out << "{ "
+        << "messageType: ROW_UPDATE, "
+        << "databaseName: " << databaseName << ", "
+        << "tableName: " << tableName << ", "
+        << "columnAlias: " << columnAlias << ", "
+        << "rowId: " << rowId << ", "
+        << "newValue: " << newValue
+        << " }";
 }
 
-UpdateRowMessage* UpdateRowMessage::createMessage(const Json::Value& json) {
-    return new UpdateRowMessage(json);
+std::unique_ptr<UpdateRowMessage> UpdateRowMessage::createMessage(const Json::Value& json) {
+    return std::make_unique<UpdateRowMessage>(json);
 }
 
 UpdateRowMessage& UpdateRowMessage::operator=(const Json::Value& json) {

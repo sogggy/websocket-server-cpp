@@ -5,21 +5,21 @@
 #include "SafeQueue.h"
 
 template <typename T>
-void SafeQueue<T>::push_back_safe(T* elem) {
+void SafeQueue<T>::push_back_safe(std::unique_ptr<T> elem) {
     mutex.lock();
-    queue.push_back(elem);
+    queue.push_back(std::move(elem));
     mutex.unlock();
 }
 
 template <typename T>
-T* SafeQueue<T>::pop_front_safe() {
+std::unique_ptr<T> SafeQueue<T>::pop_front_safe() {
     mutex.lock();
     if (queue.size() == 0) {
         mutex.unlock();
         return nullptr;
     }
 
-    T* elem = queue.front();
+    std::unique_ptr<T> elem = std::move(queue.front());
     queue.pop_front();
     mutex.unlock();
     return elem;

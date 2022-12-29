@@ -11,8 +11,8 @@ UnregisterMessage::UnregisterMessage(const Json::Value& json):
         json["tableName"].asString(),
     } {}
 
-UnregisterMessage* UnregisterMessage::createMessage(const Json::Value& json) {
-    return new UnregisterMessage(json);
+std::unique_ptr<UnregisterMessage> UnregisterMessage::createMessage(const Json::Value& json) {
+    return std::make_unique<UnregisterMessage>(json);
 }
 
 UnregisterMessage& UnregisterMessage::operator=(Json::Value json) {
@@ -30,8 +30,9 @@ Json::Value UnregisterMessage::toJson() {
 }
 
 void UnregisterMessage::print(std::ostream& out) const {
-    out << "{ " << std::endl
-        << "messageType: " << messageType::UNREGISTER << ", " << std::endl
-        << "databaseName: " << databaseName << ", " << std::endl
-        << "tableName: " << tableName << ", " << std::endl;
+    out << "{ "
+        << "messageType: " << messageType::UNREGISTER << ", "
+        << "databaseName: " << databaseName << ", "
+        << "tableName: " << tableName
+        << " }";
 }
